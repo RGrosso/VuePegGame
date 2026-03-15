@@ -1,11 +1,14 @@
 <template>
   <div id="game-stage">
     <div class="peg-container">
-      <div v-for="(row, r) in rows" :key="`row-${r}`" class="row">
+      <div v-for="(row, r) in gameBoardTiled" :key="`row-${r}`" class="row">
         <PegTile
-        v-for="i in row"
-        :key="`peg-${i}`"
-        :row-index="r"
+          v-for="(state, c) in row"
+          :key="`peg-${r}-${c}`"
+          :row-index="r"
+          :col-index="c"
+          :state="state"
+          @select-peg="game.selectPeg(r + (c + 1))"
         />
       </div>
     </div>
@@ -13,20 +16,30 @@
 </template>
 
 <script setup lang="ts">
+import PegGame from "@/game/PegGame";
 import PegTile from "./PegTile.vue";
+import { computed } from "vue";
+import { TileState } from "@/game/constants";
 
-const PEG_COUNT = 15;
+const game = new PegGame();
 
-// Calculate triangular rows
-const rows: number[][] = [];
-let pegIndex = 1;
-for (let rowNum = 1; pegIndex <= PEG_COUNT; rowNum++) {
-  const row: number[] = [];
-  for (let i = 0; i < rowNum && pegIndex <= PEG_COUNT; i++) {
-    row.push(pegIndex++);
+const gameBoard = computed(() => game.getBoard());
+const gameBoardTiled = computed(() => {
+  // Map the 1D game board to a 2D array for easier rendering
+  const tiledBoard: TileState[][] = [];
+  let index = 0;
+  for (let row = 0; row < rowCount; row++) {
+    const rowTiles: TileState[] = [];
+    for (let col = 0; col <= row; col++) {
+      rowTiles.push(gameBoard.value[index]!);
+      index++;
+    }
+    tiledBoard.push(rowTiles);
   }
-  rows.push(row);
-}
+  return tiledBoard;
+});
+const rowCount = 5;
+
 </script>
 
 <style scoped>
