@@ -1,11 +1,18 @@
-<script setup lang="ts"></script>
-
 <template>
-  <h1>You did it!</h1>
-  <p>
-    Visit <a href="https://vuejs.org/" target="_blank" rel="noopener">vuejs.org</a> to read the
-    documentation
-  </p>
+  <div id="vue-app">
+    <GameStage />
+  </div>
 </template>
 
-<style scoped></style>
+<script setup lang="ts">
+import GameStage from "./components/GameStage.vue";
+</script>
+
+<style scoped>
+#vue-app {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+</style>
