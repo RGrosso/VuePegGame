@@ -9,6 +9,7 @@
           :col-index="c"
           :state="gameBoard[gameBoardIndex]!"
           @select-peg="selectPeg(gameBoardIndex)"
+          @select-end="selectEnd(gameBoardIndex)"
         />
       </div>
     </div>
@@ -39,6 +40,13 @@ const gameBoardTiled = computed(() => {
 
 function selectPeg(index: number) {
   const result = PegGame.selectPeg(gameBoard.value, index);
+  if (result.valid) {
+    gameBoard.value = result.newBoard;
+  }
+}
+
+function selectEnd(endIndex: number) {
+  const result = PegGame.selectEnd(gameBoard.value, endIndex);
   if (result.valid) {
     gameBoard.value = result.newBoard;
   }
