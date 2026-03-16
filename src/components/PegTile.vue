@@ -1,11 +1,12 @@
 <template>
   <div 
-    class="peg-tile" 
+    class="tile" 
     :class="{
-      'peg-tile--negative-y-offset': rowIndex !== 0,
-      'peg-tile--has-peg': state === TileState.Peg || state === TileState.SelectedPeg,
-      'peg-tile--is-possible-end': state === TileState.PossibleEnd,
-      'peg-tile--selected-peg': state === TileState.SelectedPeg,
+      'tile--negative-y-offset': rowIndex !== 0,
+      'tile__state--empty': state === TileState.Empty,
+      'tile__state--peg': state === TileState.Peg,
+      'tile__state--possible-end': state === TileState.PossibleEnd,
+      'tile__state--selected-peg': state === TileState.SelectedPeg,
     }"
     @click="handlePegClick"
   />
@@ -39,7 +40,7 @@ function handlePegClick() {
 </script>
 
 <style scoped>
-.peg-tile {
+.tile {
   --peg-tile-size: 96px;
 
   height: var(--peg-tile-size);
@@ -52,33 +53,37 @@ function handlePegClick() {
 }
 
 /* Offset so all hexagons so they sit flush */
-.peg-tile--negative-y-offset {
+.tile--negative-y-offset {
   margin-top: calc(var(--peg-tile-size) * -0.25);
 }
 
-.peg-tile.peg-tile--has-peg {
-  background-color: var(--tile-bg);
+.tile__state--peg,
+.tile__state--selected-peg,
+.tile__state--possible-end {
   cursor: pointer;
+
+  &:hover {
+    filter: brightness(120%);
+  }
 }
 
-.peg-tile.peg-tile--has-peg:hover {
-  background-color: var(--tile-light-bg);
+.tile__state--empty {
+  background-color: var(--tile-empty-bg);
 }
 
-.peg-tile.peg-tile--is-possible-end {
-  background-color: var(--possible-end-bg);
-  cursor: pointer;
+.tile__state--peg {
+  background-color: var(--tile-peg-bg);
 }
 
-.peg-tile.peg-tile--selected-peg {
-  background-color: var(--selected-border);
+.tile__state--possible-end {
+  background-color: var(--tile-possible-end-bg);
 }
 
-.peg-tile.peg-tile--selected-peg:hover {
-  background-color: var(--selected-border-hover);
+.tile__state--selected-peg {
+  background-color: var(--tile-selected-peg-bg);
 }
 
-.peg-tile.peg-tile--selected-peg::before {
+/* .tile__state--selected-peg::before {
   position: absolute;
   content: "";
   height: calc(100% - 8px);
@@ -89,9 +94,5 @@ function handlePegClick() {
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 1;
-}
-
-.peg-tile.peg-tile--selected-peg:hover::before {
-  background-color: var(--tile-light-bg);
-}
+} */
 </style>

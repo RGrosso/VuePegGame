@@ -8,6 +8,11 @@
   --possible-end-bg: #93f2df;
   --white: #fff;
   --selected-border: #EE6677;
+
+  --tile-empty-bg: #B0AFAD;
+  --tile-peg-bg: #1E4D45;
+  --tile-possible-end-bg: #01DBC4;
+  --tile-selected-peg-bg: #F48FB1;
 }
 
 * {
