@@ -65,7 +65,7 @@ function selectEnd(endIndex: number) {
   --tile-gap: 6px;
   background-color: var(--game-bg);
   border-radius: 32px;
-  border: 2px solid var(--grey);
+  border: 2px solid var(--border);
   padding: 4rem;
   display: flex;
   flex-direction: column;

@@ -52,6 +52,19 @@ function handlePegClick() {
   z-index: 2;
 }
 
+.tile::before {
+  position: absolute;
+  content: "";
+  height: calc(100% - 4px);
+  width: calc(100% - 4px);
+  background-color: transparent;
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+}
+
 /* Offset so all hexagons so they sit flush */
 .tile--negative-y-offset {
   margin-top: calc(var(--peg-tile-size) * -0.25);
@@ -68,31 +81,34 @@ function handlePegClick() {
 }
 
 .tile__state--empty {
-  background-color: var(--tile-empty-bg);
+  background-color: var(--tile-empty-border);
+
+  &::before {
+    background-color: var(--tile-empty-bg);
+  }
 }
 
 .tile__state--peg {
-  background-color: var(--tile-peg-bg);
-}
+  background-color: var(--tile-peg-border);
 
-.tile__state--possible-end {
-  background-color: var(--tile-possible-end-bg);
+  &::before {
+    background-color: var(--tile-peg-bg);
+  }
 }
 
 .tile__state--selected-peg {
-  background-color: var(--tile-selected-peg-bg);
+  background-color: var(--tile-selected-peg-border);
+
+  &::before {
+    background-color: var(--tile-selected-peg-bg);
+  }
 }
 
-/* .tile__state--selected-peg::before {
-  position: absolute;
-  content: "";
-  height: calc(100% - 8px);
-  width: calc(100% - 8px);
-  background-color: var(--tile-bg);
-  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 1;
-} */
+.tile__state--possible-end {
+  background-color: var(--tile-possible-end-border);
+
+  &::before {
+    background-color: var(--tile-possible-end-bg);
+  }
+}
 </style>
