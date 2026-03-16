@@ -7,7 +7,7 @@
       'peg-tile--is-possible-end': state === TileState.PossibleEnd,
       'peg-tile--selected-peg': state === TileState.SelectedPeg,
     }"
-    @click="selectPeg"
+    @click="handlePegClick"
   />
 </template>
 
@@ -24,7 +24,7 @@ const emit = defineEmits<{
   selectEnd: [],
 }>();
 
-function selectPeg() {
+function handlePegClick() {
   if (state === TileState.Peg) {
     emit("selectPeg");
     return;
@@ -48,6 +48,7 @@ function selectPeg() {
   clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
   transition: background-color 150ms ease-in-out;
   position: relative;
+  z-index: 2;
 }
 
 /* Offset so all hexagons so they sit flush */
@@ -56,28 +57,41 @@ function selectPeg() {
 }
 
 .peg-tile.peg-tile--has-peg {
-  background-color: var(--red);
+  background-color: var(--tile-bg);
   cursor: pointer;
 }
+
 .peg-tile.peg-tile--has-peg:hover {
-  background-color: var(--red-light);
+  background-color: var(--tile-light-bg);
 }
 
-.peg-tile--is-possible-end {
-  background-color: var(--green);
+.peg-tile.peg-tile--is-possible-end {
+  background-color: var(--possible-end-bg);
   cursor: pointer;
 }
 
-.peg-tile--selected-peg::before {
-  position: relative;
+.peg-tile.peg-tile--selected-peg {
+  background-color: var(--selected-border);
+}
+
+.peg-tile.peg-tile--selected-peg:hover {
+  background-color: var(--selected-border-hover);
+}
+
+.peg-tile.peg-tile--selected-peg::before {
+  position: absolute;
   content: "";
-  /* Create the same shape 1px wider */
-  height: calc(var(--peg-tile-size) + 2px);
-  width: calc(var(--peg-tile-size) + 2px);
-  background-color: var(--pale);
+  height: calc(100% - 8px);
+  width: calc(100% - 8px);
+  background-color: var(--tile-bg);
   clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-  /* Center the new shape behind the original */
-  top: -1px;
-  left: -1px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+}
+
+.peg-tile.peg-tile--selected-peg:hover::before {
+  background-color: var(--tile-light-bg);
 }
 </style>

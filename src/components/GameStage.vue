@@ -3,12 +3,12 @@
     <div class="peg-container">
       <div v-for="(row, r) in gameBoardTiled" :key="`row-${r}`" class="row">
         <PegTile
-          v-for="(state, c) in row"
+          v-for="(gameBoardIndex, c) in row"
           :key="`peg-${r}-${c}`"
           :row-index="r"
           :col-index="c"
-          :state="state"
-          @select-peg="game.selectPeg(r + (c + 1))"
+          :state="gameBoard[gameBoardIndex]!"
+          @select-peg="selectPeg(gameBoardIndex)"
         />
       </div>
     </div>
@@ -18,28 +18,31 @@
 <script setup lang="ts">
 import PegGame from "@/game/PegGame";
 import PegTile from "./PegTile.vue";
-import { computed } from "vue";
-import { TileState } from "@/game/constants";
+import { computed, ref } from "vue";
+import { ROW_COUNT, type BoardState } from "@/game/constants";
 
-const game = new PegGame();
-
-const gameBoard = computed(() => game.getBoard());
+const gameBoard = ref<BoardState>(PegGame.getInitialBoard());
 const gameBoardTiled = computed(() => {
-  // Map the 1D game board to a 2D array for easier rendering
-  const tiledBoard: TileState[][] = [];
+  // Map the 1D game board to a 2D index array for easier rendering
+  const tiledBoard: number[][] = [];
   let index = 0;
-  for (let row = 0; row < rowCount; row++) {
-    const rowTiles: TileState[] = [];
+  for (let row = 0; row < ROW_COUNT; row++) {
+    const rowTiles: number[] = [];
     for (let col = 0; col <= row; col++) {
-      rowTiles.push(gameBoard.value[index]!);
+      rowTiles.push(index);
       index++;
     }
     tiledBoard.push(rowTiles);
   }
   return tiledBoard;
 });
-const rowCount = 5;
 
+function selectPeg(index: number) {
+  const result = PegGame.selectPeg(gameBoard.value, index);
+  if (result.valid) {
+    gameBoard.value = result.newBoard;
+  }
+}
 </script>
 
 <style scoped>

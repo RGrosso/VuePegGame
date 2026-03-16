@@ -38,10 +38,10 @@ export const possibleMoves: [number, number, number][] = [
 ];
 
 export enum TileState {
-  Empty = 0,
-  Peg = 1,
-  SelectedPeg = 2,
-  PossibleEnd = 3,
+  Empty = "Empty",
+  Peg = "Peg",
+  SelectedPeg = "SelectedPeg",
+  PossibleEnd = "PossibleEnd",
 }
 
 export type BoardState = [
@@ -51,3 +51,5 @@ export type BoardState = [
   TileState, TileState, TileState, TileState,
   TileState, TileState, TileState, TileState, TileState,
 ];
+
+export const ROW_COUNT = 5;
