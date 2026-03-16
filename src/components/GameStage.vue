@@ -20,9 +20,11 @@
 import PegGame from "@/game/PegGame";
 import PegTile from "./PegTile.vue";
 import { computed, ref } from "vue";
-import { ROW_COUNT, type BoardState } from "@/game/constants";
+import { GameStatus, ROW_COUNT, type BoardState } from "@/game/constants";
 
 const gameBoard = ref<BoardState>(PegGame.getInitialBoard());
+const gameState = ref<GameStatus>(GameStatus.Ongoing);
+
 const gameBoardTiled = computed(() => {
   // Map the 1D game board to a 2D index array for easier rendering
   const tiledBoard: number[][] = [];
@@ -38,6 +40,10 @@ const gameBoardTiled = computed(() => {
   return tiledBoard;
 });
 
+function updateGameState() {
+  gameState.value = PegGame.getGameState(gameBoard.value);
+}
+
 function selectPeg(index: number) {
   const result = PegGame.selectPeg(gameBoard.value, index);
   if (result.valid) {
@@ -49,6 +55,7 @@ function selectEnd(endIndex: number) {
   const result = PegGame.selectEnd(gameBoard.value, endIndex);
   if (result.valid) {
     gameBoard.value = result.newBoard;
+    updateGameState();
   }
 }
 </script>
@@ -56,11 +63,12 @@ function selectEnd(endIndex: number) {
 <style scoped>
 #game-stage {
   --tile-gap: 6px;
-  background-color: var(--game-background);
-  border-radius: 6px;
-  border: 1px solid var(--grey);
+  background-color: var(--game-bg);
+  border-radius: 32px;
+  border: 2px solid var(--grey);
   padding: 4rem;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
 }

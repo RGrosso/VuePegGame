@@ -1,4 +1,4 @@
-import { possibleMoves, TileState, type BoardState } from "./constants";
+import { GameStatus, possibleMoves, TileState, type BoardState } from "./constants";
 type ValidedMoveResult = { valid: true, newBoard: BoardState } | { valid: false };
 
 export default class PegGame {
@@ -18,6 +18,13 @@ export default class PegGame {
    */
   static selectPeg(board: BoardState, index: number): ValidedMoveResult {
     const newBoard: BoardState = [...board];
+    
+    // Deselect the peg if it's already selected and revert any PossibleEnd tiles back to Empty
+    if (newBoard[index] === TileState.SelectedPeg) {
+      newBoard[index] = TileState.Peg;
+      this.revertPossibleEnds(newBoard);
+      return { valid: true, newBoard };
+    }
 
     if (newBoard[index] !== TileState.Peg) {
       console.error("selectPeg: Attempted to select a peg at an index that does not contain a peg.");
@@ -60,6 +67,15 @@ export default class PegGame {
     return { valid: true, newBoard };
   }
 
+  private static revertPossibleEnds(board: BoardState): BoardState {
+    board.forEach((tile, i) => {
+      if (tile === TileState.PossibleEnd) {
+        board[i] = TileState.Empty;
+      }
+    });
+    return board;
+  }
+
   /**
    * We assume the end index is valid as the UI handles this
    */
@@ -90,7 +106,39 @@ export default class PegGame {
     newBoard[startIndex] = TileState.Empty;
     newBoard[endIndex] = TileState.Peg;
     newBoard[middleIndex] = TileState.Empty; // Remove the peg that was jumped over
+    this.revertPossibleEnds(newBoard); // Clear any remaining possible end markers
 
     return { valid: true, newBoard };
+  }
+
+  static getGameState(board: BoardState): GameStatus {
+    const pegIndexesRemaining = board.reduce((acc: number[], tile, index) => {
+      if (tile === TileState.Peg) {
+        acc.push(index);
+      } 
+      return acc;
+    }, []);
+
+    // If there is only 1 peg left, the game is won
+    if (pegIndexesRemaining.length === 1) {
+      return GameStatus.Won;
+    }
+
+    // Loop through the remaining pegs and check if any have a possible move
+    for (let i = 0; i < pegIndexesRemaining.length; i++) {
+      const startingIndex = pegIndexesRemaining[i];
+      const moveExists = possibleMoves.some(([from, over, to]) => {
+        return from === startingIndex 
+          && board[from] === TileState.Peg
+          && board[over] === TileState.Peg
+          && board[to] === TileState.Empty;
+      });
+      if (moveExists) {
+        return GameStatus.Ongoing;
+      }
+    }
+
+    // Otherwise, there are no possible moves and the game is lost
+    return GameStatus.NoPossibleMoves;
   }
 }

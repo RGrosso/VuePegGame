@@ -26,7 +26,7 @@ const emit = defineEmits<{
 }>();
 
 function handlePegClick() {
-  if (state === TileState.Peg) {
+  if (state === TileState.Peg || state === TileState.SelectedPeg) {
     emit("selectPeg");
     return;
   }

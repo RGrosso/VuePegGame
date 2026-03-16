@@ -53,3 +53,9 @@ export type BoardState = [
 ];
 
 export const ROW_COUNT = 5;
+
+export enum GameStatus {
+  Ongoing = "Ongoing",
+  NoPossibleMoves = "NoPossibleMoves",
+  Won = "Won",
+}
