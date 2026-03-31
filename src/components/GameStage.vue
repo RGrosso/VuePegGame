@@ -13,6 +13,26 @@
         />
       </div>
     </div>
+    <OverlayMessage v-if="gameState === GameStatus.Won" variant="success"
+     heading="Game Won"
+      :text="[
+        'Congratulations!',
+        'You\'ve won the game!',
+      ]"
+      restartGameText="Play Again"
+      @restartGame="restartGame"
+    />
+    <OverlayMessage
+      v-if="gameState === GameStatus.NoPossibleMoves"
+      variant="error"
+      heading="Game Over"
+      :text="[
+        'There are no possible moves left to play.',
+        `You had ${remainingPegs} remaining pegs left.`,
+      ]"
+      restartGameText="Retry"
+      @restartGame="restartGame"
+    />
   </div>
 </template>
 
@@ -20,10 +40,12 @@
 import PegGame from "@/game/PegGame";
 import PegTile from "./PegTile.vue";
 import { computed, ref } from "vue";
-import { GameStatus, ROW_COUNT, type BoardState } from "@/game/constants";
+import { GameStatus, ROW_COUNT, TileState, type BoardState } from "@/game/constants";
+import OverlayMessage from "./OverlayMessage.vue";
 
 const gameBoard = ref<BoardState>(PegGame.getInitialBoard());
 const gameState = ref<GameStatus>(GameStatus.Ongoing);
+const remainingPegs = computed<number>(() => gameBoard.value.filter(peg => [TileState.Peg, TileState.SelectedPeg].includes(peg)).length);
 
 const gameBoardTiled = computed(() => {
   // Map the 1D game board to a 2D index array for easier rendering
@@ -58,19 +80,26 @@ function selectEnd(endIndex: number) {
     updateGameState();
   }
 }
+
+function restartGame() {
+  gameBoard.value = PegGame.getInitialBoard();
+  gameState.value = GameStatus.Ongoing;
+}
 </script>
 
 <style scoped>
 #game-stage {
   --tile-gap: 6px;
   background-color: var(--game-bg);
-  border-radius: 32px;
+  border-radius: var(--game-stage-border-radius);
   border: 2px solid var(--border);
   padding: 4rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  position: relative;
+  z-index: 1;
 }
 
 .peg-container {
