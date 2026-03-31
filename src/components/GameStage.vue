@@ -13,7 +13,7 @@
         />
       </div>
     </div>
-    <OverlayMessage v-if="gameState === GameStatus.Won" variant="success"
+    <OverlayMessage v-if="gameStatus === GameStatus.Won" variant="success"
      heading="Game Won"
       :text="[
         'Congratulations!',
@@ -23,7 +23,7 @@
       @restartGame="restartGame"
     />
     <OverlayMessage
-      v-if="gameState === GameStatus.NoPossibleMoves"
+      v-if="gameStatus === GameStatus.NoPossibleMoves"
       variant="error"
       heading="Game Over"
       :text="[
@@ -33,6 +33,7 @@
       restartGameText="Retry"
       @restartGame="restartGame"
     />
+    <ConfettiContainer :game-status="gameStatus" />
   </div>
 </template>
 
@@ -42,9 +43,10 @@ import PegTile from "./PegTile.vue";
 import { computed, ref } from "vue";
 import { GameStatus, ROW_COUNT, TileState, type BoardState } from "@/game/constants";
 import OverlayMessage from "./OverlayMessage.vue";
+import ConfettiContainer from "./ConfettiContainer.vue";
 
 const gameBoard = ref<BoardState>(PegGame.getInitialBoard());
-const gameState = ref<GameStatus>(GameStatus.Ongoing);
+const gameStatus = ref<GameStatus>(GameStatus.Ongoing);
 const remainingPegs = computed<number>(() => gameBoard.value.filter(peg => [TileState.Peg, TileState.SelectedPeg].includes(peg)).length);
 
 const gameBoardTiled = computed(() => {
@@ -63,7 +65,7 @@ const gameBoardTiled = computed(() => {
 });
 
 function updateGameState() {
-  gameState.value = PegGame.getGameState(gameBoard.value);
+  gameStatus.value = PegGame.getGameState(gameBoard.value);
 }
 
 function selectPeg(index: number) {
@@ -83,7 +85,7 @@ function selectEnd(endIndex: number) {
 
 function restartGame() {
   gameBoard.value = PegGame.getInitialBoard();
-  gameState.value = GameStatus.Ongoing;
+  gameStatus.value = GameStatus.Ongoing;
 }
 </script>
 

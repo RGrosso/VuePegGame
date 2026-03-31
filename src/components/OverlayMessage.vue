@@ -11,6 +11,7 @@
       <p v-for="(t, i) in text" :key="t" :class="`mb-${i === text.length - 1 ? 8 : 2}`">
         {{ t }}
       </p>
+
       <GameButton variant="primary" @click="emit('restartGame')">{{ restartGameText }}</GameButton>
     </div>
   </div>

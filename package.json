@@ -14,7 +14,8 @@
     "lint:eslint": "eslint . --fix --cache"
   },
   "dependencies": {
-    "vue": "^3.5.29"
+    "vue": "^3.5.29",
+    "vue-confetti-explosion": "^1.0.2"
   },
   "devDependencies": {
     "@tsconfig/node24": "^24.0.4",
