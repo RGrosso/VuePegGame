@@ -1,39 +1,42 @@
 <template>
   <div id="game-stage">
-    <div class="peg-container">
-      <div v-for="(row, r) in gameBoardTiled" :key="`row-${r}`" class="row">
-        <PegTile
-          v-for="(gameBoardIndex, c) in row"
-          :key="`peg-${r}-${c}`"
-          :row-index="r"
-          :col-index="c"
-          :state="gameBoard[gameBoardIndex]!"
-          @select-peg="selectPeg(gameBoardIndex)"
-          @select-end="selectEnd(gameBoardIndex)"
-        />
+    <GameIntro v-if="showIntro" @startGame="showIntro = false" />
+    <template v-else>
+      <div class="peg-container">
+        <div v-for="(row, r) in gameBoardTiled" :key="`row-${r}`" class="row">
+          <PegTile
+            v-for="(gameBoardIndex, c) in row"
+            :key="`peg-${r}-${c}`"
+            :row-index="r"
+            :col-index="c"
+            :state="gameBoard[gameBoardIndex]!"
+            @select-peg="selectPeg(gameBoardIndex)"
+            @select-end="selectEnd(gameBoardIndex)"
+          />
+        </div>
       </div>
-    </div>
-    <OverlayMessage v-if="gameStatus === GameStatus.Won" variant="success"
-     heading="Game Won"
-      :text="[
-        'Congratulations!',
-        'You\'ve won the game!',
-      ]"
-      restartGameText="Play Again"
-      @restartGame="restartGame"
-    />
-    <OverlayMessage
-      v-if="gameStatus === GameStatus.NoPossibleMoves"
-      variant="error"
-      heading="Game Over"
-      :text="[
-        'There are no possible moves left to play.',
-        `You had ${remainingPegs} remaining pegs left.`,
-      ]"
-      restartGameText="Retry"
-      @restartGame="restartGame"
+      <OverlayMessage v-if="gameStatus === GameStatus.Won" variant="success"
+      heading="Game Won"
+        :text="[
+          'Congratulations!',
+          'You\'ve won the game!',
+        ]"
+        restartGameText="Play Again"
+        @restartGame="restartGame"
+      />
+      <OverlayMessage
+        v-if="gameStatus === GameStatus.NoPossibleMoves"
+        variant="error"
+        heading="Game Over"
+        :text="[
+          'There are no possible moves left to play.',
+          `You had ${remainingPegs} remaining pegs left.`,
+        ]"
+        restartGameText="Retry"
+        @restartGame="restartGame"
     />
     <ConfettiContainer :game-status="gameStatus" />
+    </template>
   </div>
 </template>
 
@@ -44,10 +47,12 @@ import { computed, ref } from "vue";
 import { GameStatus, ROW_COUNT, TileState, type BoardState } from "@/game/constants";
 import OverlayMessage from "./OverlayMessage.vue";
 import ConfettiContainer from "./ConfettiContainer.vue";
+import GameIntro from "./GameIntro.vue";
 
 const gameBoard = ref<BoardState>(PegGame.getInitialBoard());
 const gameStatus = ref<GameStatus>(GameStatus.Ongoing);
 const remainingPegs = computed<number>(() => gameBoard.value.filter(peg => [TileState.Peg, TileState.SelectedPeg].includes(peg)).length);
+const showIntro = ref(true);
 
 const gameBoardTiled = computed(() => {
   // Map the 1D game board to a 2D index array for easier rendering
@@ -102,6 +107,8 @@ function restartGame() {
   align-items: center;
   position: relative;
   z-index: 1;
+  width: 640px;
+  height: 640px;
 }
 
 .peg-container {
