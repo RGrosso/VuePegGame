@@ -18,7 +18,7 @@ export default class PegGame {
    */
   static selectPeg(board: BoardState, index: number): ValidedMoveResult {
     const newBoard: BoardState = [...board];
-    
+
     // Deselect the peg if it's already selected and revert any PossibleEnd tiles back to Empty
     if (newBoard[index] === TileState.SelectedPeg) {
       newBoard[index] = TileState.Peg;
@@ -44,12 +44,12 @@ export default class PegGame {
 
     // Mark the selected peg
     newBoard[index] = TileState.SelectedPeg;
-    
+
     // Mark possible moves from the selected peg
     possibleMoves.forEach(([from, over, to]) => {
       if (from !== index) return; // Only consider moves starting from the selected peg
 
-      const isValidMove = newBoard[from] === TileState.SelectedPeg 
+      const isValidMove = newBoard[from] === TileState.SelectedPeg
         && newBoard[over] === TileState.Peg
         && (newBoard[to] === TileState.Empty || newBoard[to] === TileState.PossibleEnd);
 
@@ -60,10 +60,10 @@ export default class PegGame {
     });
 
     if (!hasPossibleMoves) {
-      console.error("selectPeg: No valid moves available from the selected peg.");
-      return { valid: false };
+      // Technically not valid, but we can still allown the user
+      return { valid: true, newBoard };
     }
-    
+
     return { valid: true, newBoard };
   }
 
@@ -115,7 +115,7 @@ export default class PegGame {
     const pegIndexesRemaining = board.reduce((acc: number[], tile, index) => {
       if (tile === TileState.Peg) {
         acc.push(index);
-      } 
+      }
       return acc;
     }, []);
 
@@ -128,7 +128,7 @@ export default class PegGame {
     for (let i = 0; i < pegIndexesRemaining.length; i++) {
       const startingIndex = pegIndexesRemaining[i];
       const moveExists = possibleMoves.some(([from, over, to]) => {
-        return from === startingIndex 
+        return from === startingIndex
           && board[from] === TileState.Peg
           && board[over] === TileState.Peg
           && board[to] === TileState.Empty;
