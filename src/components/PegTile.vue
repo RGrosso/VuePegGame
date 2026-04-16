@@ -41,109 +41,80 @@ function handlePegClick() {
 
 <style scoped>
 .tile {
-  --peg-tile-size: 96px;
+  --peg-tile-height: 96px;
+  --peg-tile-width: calc(var(--peg-tile-height) * 0.866);
+  --duration: 6s;
+  --hex-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
 
-  height: var(--peg-tile-size);
-  width: var(--peg-tile-size);
-  background-color: var(--grey);
-  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  --current-border: var(--tile-empty-border, #444);
+  --current-bg: var(--tile-empty-bg, #2a2a2a);
+
+  height: var(--peg-tile-height);
+  width: var(--peg-tile-width);
+  background-color: var(--current-border);
+  clip-path: var(--hex-path);
+
   transition: background-color 150ms ease-in-out;
   position: relative;
-  z-index: 2;
+  display: inline-block;
+  transform-origin: center center;
 }
 
 .tile::before {
   position: absolute;
   content: "";
-  height: calc(100% - 4px);
-  width: calc(100% - 4px);
-  background-color: transparent;
-  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 1;
+  inset: 2px;
+  background-color: var(--current-bg);
+  clip-path: var(--hex-path);
 }
 
-/* Offset so all hexagons so they sit flush */
-.tile--negative-y-offset {
-  margin-top: calc(var(--peg-tile-size) * -0.25);
-}
-
-.tile__state--peg,
-.tile__state--selected-peg,
-.tile__state--possible-end {
-  cursor: pointer;
-
-  &:hover {
-    filter: brightness(120%);
-  }
-}
-
-.tile__state--empty {
-  background-color: var(--tile-empty-border);
-
-  &::before {
-    background-color: var(--tile-empty-bg);
-  }
-}
 
 .tile__state--peg {
-  background-color: var(--tile-peg-border);
-
-  &::before {
-    background-color: var(--tile-peg-bg);
-  }
-}
-
-@keyframes pulse-possible-end-size {
-  0%, 100% {
-    height: calc(100% - 8px);
-    width: calc(100% - 8px);
-  }
-  33% {
-    height: calc(100% - 4px);
-    width: calc(100% - 4px);
-  }
+  --current-border: var(--tile-peg-border);
+  --current-bg: var(--tile-peg-bg);
 }
 
 .tile__state--selected-peg {
-  background-color: var(--tile-selected-peg-border);
-
-  &::before {
-    background-color: var(--tile-selected-peg-bg);
-  }
-}
-
-@keyframes pulse-possible-end-bg {
-  0%, 100% {
-    background-color: var(--tile-possible-end-border);
-  }
-  33% {
-    background-color: var(--tile-possible-end-bg);
-  }
-}
-
-@keyframes pulse-possible-end-size {
-  0%, 100% {
-    height: calc(100% - 8px);
-    width: calc(100% - 8px);
-  }
-  33% {
-    height: calc(100% - 4px);
-    width: calc(100% - 4px);
-  }
+  --current-border: var(--tile-selected-peg-border);
+  --current-bg: var(--tile-selected-peg-bg);
+  z-index: 10;
+  animation: rotate-pause var(--duration) cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
 .tile__state--possible-end {
-  background-color: var(--tile-possible-end-border);
-  /* animation: pulse-possible-end-bg 500ms infinite; */
+  --current-border: var(--tile-possible-end-border);
+  --current-bg: var(--tile-possible-end-bg);
+}
 
-  &::before {
-    background-color: var(--tile-possible-end-bg);
-    animation: pulse-possible-end-size 500ms infinite;
-    height: calc(100% - 8px);
-    width: calc(100% - 8px);
-  }
+.tile__state--peg:hover::before,
+.tile__state--selected-peg:hover::before,
+.tile__state--possible-end:hover::before {
+  animation: pulse-scale 1s ease-in-out infinite;
+}
+
+.tile--negative-y-offset {
+  margin-top: calc(var(--peg-tile-height) * -0.25);
+}
+
+@keyframes rotate-pause {
+  0%, 12% { transform: rotate(0deg); }
+  16.6%, 28% { transform: rotate(60deg); }
+  33.3%, 45% { transform: rotate(120deg); }
+  50%, 62% { transform: rotate(180deg); }
+  66.6%, 78% { transform: rotate(240deg); }
+  83.3%, 95% { transform: rotate(300deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes pulse-scale {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(0.9); }
+}
+
+.tile__state--peg:hover,
+.tile__state--selected-peg:hover,
+.tile__state--possible-end:hover {
+  cursor: pointer;
+  filter: brightness(1.2);
 }
 </style>

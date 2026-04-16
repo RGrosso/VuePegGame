@@ -53,13 +53,13 @@
   --tile-empty-border: var(--clr-surface-a20);
 
   --tile-peg-bg: var(--clr-success-a0);
-  --tile-peg-border: var(--clr-success-a0);
+  --tile-peg-border: var(--clr-success-a10);
 
-  --tile-selected-peg-bg: var(--clr-success-a10);
-  --tile-selected-peg-border: var(--clr-success-a20);
+  --tile-selected-peg-bg: var(--clr-warning-a0);
+  --tile-selected-peg-border: var(--clr-warning-a10);
 
-  --tile-possible-end-bg: var(--clr-surface-a30);
-  --tile-possible-end-border: var(--clr-success-a20);
+  --tile-possible-end-bg: var(--clr-info-a20);
+  --tile-possible-end-border: var(--clr-info-a0);
 
   --game-stage-border-radius: 32px;
   --white: #fff;
