@@ -46,7 +46,7 @@
 <script setup lang="ts">
 import PegGame from "@/game/PegGame";
 import PegTile from "./PegTile.vue";
-import { computed, nextTick, ref, shallowRef, useTemplateRef } from "vue";
+import { computed, ref, shallowRef, useTemplateRef } from "vue";
 import { GameStatus, ROW_COUNT, TileState, type BoardState } from "@/game/constants";
 import OverlayMessage from "./OverlayMessage.vue";
 import ConfettiContainer from "./ConfettiContainer.vue";
@@ -59,6 +59,7 @@ const remainingPegs = computed<number>(() => gameBoard.value.filter(peg => [Tile
 const showIntro = ref(true);
 const timerRef = useTemplateRef("timerEl");
 const gameOverDuration = shallowRef<number | null>(null);
+const hasStartedTimer = shallowRef(false);
 
 const gameBoardTiled = computed(() => {
   // Map the 1D game board to a 2D index array for easier rendering
@@ -78,12 +79,16 @@ const gameBoardTiled = computed(() => {
 function updateGameState() {
   gameStatus.value = PegGame.getGameState(gameBoard.value);
   if (gameStatus.value !== GameStatus.Ongoing) {
-    gameOverDuration.value = null;
     gameOverDuration.value = timerRef.value?.stop() ?? null;
   }
 }
 
 function selectPeg(index: number) {
+  // Start the timer on the first peg selection
+  if (!hasStartedTimer.value) {
+    timerRef.value?.start();
+    hasStartedTimer.value = true;
+  }
   const result = PegGame.selectPeg(gameBoard.value, index);
   if (result.valid) {
     gameBoard.value = result.newBoard;
@@ -100,14 +105,13 @@ function selectEnd(endIndex: number) {
 
 function restartGame() {
   gameBoard.value = PegGame.getInitialBoard();
-  timerRef.value?.start();
+  hasStartedTimer.value = false;
+  timerRef.value?.reset();
   gameStatus.value = GameStatus.Ongoing;
 }
 
-async function startGame() {
+function startGame() {
   showIntro.value = false;
-  await nextTick();
-  timerRef.value?.start();
 }
 </script>
 

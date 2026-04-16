@@ -22,12 +22,19 @@ export function useTimer() {
   }
 
   function stop(): number {
+    resetInterval();
     return timer.value;
+  }
+
+  function reset() {
+    resetInterval();
+    timer.value = 0;
   }
 
   return {
     value: timer,
     start,
     stop,
+    reset,
   };
 }

@@ -31,7 +31,7 @@ defineSlots<{
   padding: 14px 0;
   border: none;
   border-radius: 14px;
-  font-size: 16px;
+  font-size: 20px;
   font-weight: 700;
   cursor: pointer;
   outline: none;
@@ -42,12 +42,12 @@ defineSlots<{
   transform: scale(0.96);
 }
 .btn-main {
-  background: #6366f1;
-  color: #fff;
+  background: var(--clr-primary);
+  color: var(--white);
  }
 .btn-outline {
   background: transparent;
-  color: #6366f1;
+  color: var(--clr-primary);
   margin-top: 4px;
 }
 </style>

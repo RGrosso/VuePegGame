@@ -10,8 +10,8 @@
       <p><strong>Continue jumping:</strong> Keep making valid jumps until no more moves are possible.</p>
       <p><strong>Winning:</strong> The goal is to end the game with only a single peg remaining on the board.</p>
     </div>
-    <GameButton class="game-intro-cta" @click="emit('startGame')">
-      Start
+    <GameButton variant="primary" class="game-intro-cta" @click="emit('startGame')">
+      Start <span class="mdi mdi-chevron-right" />
     </GameButton>
   </div>
 </template>

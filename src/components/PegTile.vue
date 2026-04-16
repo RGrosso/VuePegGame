@@ -34,8 +34,6 @@ function handlePegClick() {
     emit("selectEnd");
     return;
   }
-
-  // TODO: add an animated shake effect to indicate invalid move
 }
 </script>
 
@@ -46,8 +44,8 @@ function handlePegClick() {
   --duration: 6s;
   --hex-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
 
-  --current-border: var(--tile-empty-border, #444);
-  --current-bg: var(--tile-empty-bg, #2a2a2a);
+  --current-border: var(--tile-empty-border);
+  --current-bg: var(--tile-empty-bg);
 
   height: var(--peg-tile-height);
   width: var(--peg-tile-width);
@@ -88,7 +86,7 @@ function handlePegClick() {
 
 .tile__state--peg:hover::before,
 .tile__state--selected-peg:hover::before,
-.tile__state--possible-end:hover::before {
+.tile__state--possible-end::before {
   animation: pulse-scale 1s ease-in-out infinite;
 }
 
