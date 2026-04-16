@@ -1,7 +1,8 @@
 <template>
   <div id="game-stage">
-    <GameIntro v-if="showIntro" @startGame="showIntro = false" />
+    <GameIntro v-if="showIntro" @startGame="startGame" />
     <template v-else>
+      <GameTimer ref="timerEl" />
       <div class="peg-container">
         <div v-for="(row, r) in gameBoardTiled" :key="`row-${r}`" class="row">
           <PegTile
@@ -15,8 +16,10 @@
           />
         </div>
       </div>
-      <OverlayMessage v-if="gameStatus === GameStatus.Won" variant="success"
-      heading="Game Won"
+      <OverlayMessage
+        v-if="gameStatus === GameStatus.Won"
+        variant="success"
+        heading="Game Won"
         :text="[
           'Congratulations!',
           'You\'ve won the game!',
@@ -43,16 +46,19 @@
 <script setup lang="ts">
 import PegGame from "@/game/PegGame";
 import PegTile from "./PegTile.vue";
-import { computed, ref } from "vue";
+import { computed, nextTick, ref, shallowRef, useTemplateRef } from "vue";
 import { GameStatus, ROW_COUNT, TileState, type BoardState } from "@/game/constants";
 import OverlayMessage from "./OverlayMessage.vue";
 import ConfettiContainer from "./ConfettiContainer.vue";
 import GameIntro from "./GameIntro.vue";
+import GameTimer from "./GameTimer.vue";
 
 const gameBoard = ref<BoardState>(PegGame.getInitialBoard());
 const gameStatus = ref<GameStatus>(GameStatus.Ongoing);
 const remainingPegs = computed<number>(() => gameBoard.value.filter(peg => [TileState.Peg, TileState.SelectedPeg].includes(peg)).length);
 const showIntro = ref(true);
+const timerRef = useTemplateRef("timerEl");
+const gameOverDuration = shallowRef<number | null>(null);
 
 const gameBoardTiled = computed(() => {
   // Map the 1D game board to a 2D index array for easier rendering
@@ -71,6 +77,10 @@ const gameBoardTiled = computed(() => {
 
 function updateGameState() {
   gameStatus.value = PegGame.getGameState(gameBoard.value);
+  if (gameStatus.value !== GameStatus.Ongoing) {
+    gameOverDuration.value = null;
+    gameOverDuration.value = timerRef.value?.stop() ?? null;
+  }
 }
 
 function selectPeg(index: number) {
@@ -90,7 +100,14 @@ function selectEnd(endIndex: number) {
 
 function restartGame() {
   gameBoard.value = PegGame.getInitialBoard();
+  timerRef.value?.start();
   gameStatus.value = GameStatus.Ongoing;
+}
+
+async function startGame() {
+  showIntro.value = false;
+  await nextTick();
+  timerRef.value?.start();
 }
 </script>
 
