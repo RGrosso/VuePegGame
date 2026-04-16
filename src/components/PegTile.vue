@@ -1,6 +1,6 @@
 <template>
-  <div 
-    class="tile" 
+  <div
+    class="tile"
     :class="{
       'tile--negative-y-offset': rowIndex !== 0,
       'tile__state--empty': state === TileState.Empty,
@@ -96,6 +96,17 @@ function handlePegClick() {
   }
 }
 
+@keyframes pulse-possible-end-size {
+  0%, 100% {
+    height: calc(100% - 8px);
+    width: calc(100% - 8px);
+  }
+  33% {
+    height: calc(100% - 4px);
+    width: calc(100% - 4px);
+  }
+}
+
 .tile__state--selected-peg {
   background-color: var(--tile-selected-peg-border);
 
@@ -104,11 +115,35 @@ function handlePegClick() {
   }
 }
 
+@keyframes pulse-possible-end-bg {
+  0%, 100% {
+    background-color: var(--tile-possible-end-border);
+  }
+  33% {
+    background-color: var(--tile-possible-end-bg);
+  }
+}
+
+@keyframes pulse-possible-end-size {
+  0%, 100% {
+    height: calc(100% - 8px);
+    width: calc(100% - 8px);
+  }
+  33% {
+    height: calc(100% - 4px);
+    width: calc(100% - 4px);
+  }
+}
+
 .tile__state--possible-end {
   background-color: var(--tile-possible-end-border);
+  /* animation: pulse-possible-end-bg 500ms infinite; */
 
   &::before {
     background-color: var(--tile-possible-end-bg);
+    animation: pulse-possible-end-size 500ms infinite;
+    height: calc(100% - 8px);
+    width: calc(100% - 8px);
   }
 }
 </style>
