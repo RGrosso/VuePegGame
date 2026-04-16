@@ -12,7 +12,7 @@
   --clr-danger: #9c2121;
   --clr-danger-light: #eb9e9e;
 
-  --bg: var(--clr-surface-a10);
+  --bg: #1f1f1f;
   --game-bg:var(--clr-surface-a0);
   --grey: #b0afad;
 
@@ -24,13 +24,13 @@
   --tile-peg-bg: var(--clr-primary);
   --tile-peg-border: var(--clr-primary-light);
 
-  --tile-selected-peg-bg: #a87a2a;
-  --tile-selected-peg-border: #d7ac61;
+  --tile-selected-peg-bg: #f0d99d;
+  --tile-selected-peg-border: #ebbd5b;
 
-  --tile-possible-end-bg: #21498a;
-  --tile-possible-end-border: #92b2e5;
+  --tile-possible-end-bg: #bad1f7;
+  --tile-possible-end-border: #21498a;
 
-  --game-stage-border-radius: 32px;
+  --game-stage-border-radius: 2px;
   --white: #fff;
 }
 
