@@ -145,7 +145,14 @@ window.addEventListener("keydown", (e) => {
   --tile-gap: 6px;
   background-color: var(--game-bg);
   border-radius: var(--game-stage-border-radius);
-  border: 2px solid var(--border);
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  border-radius: 6px;
+  box-shadow:
+    inset 0 0 4px rgba(255, 255, 255, 0.2),
+    0 0 5px rgba(255, 255, 255, 0.4),
+    0 0 15px rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(3px);
   padding: 4rem;
   display: flex;
   flex-direction: column;
