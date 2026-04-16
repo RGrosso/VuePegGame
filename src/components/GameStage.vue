@@ -177,7 +177,7 @@ window.addEventListener("keydown", (e) => {
   font-size: 1.5rem;
   background: none;
   border: none;
-  color: white;
+  color: var(--white);
   border-radius: 64px;
   aspect-ratio: 1;
   height: 2.5rem;

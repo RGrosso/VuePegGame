@@ -1,13 +1,19 @@
 <template>
   <span class="game-timer"><span class="mdi mdi-timer" />
-    <span class="timer-display"><span class="timer-value">{{ value }}</span></span>
+    <span class="timer-display"><span class="timer-value">{{ formattedValue }}</span></span>
   </span>
 </template>
 
 <script setup lang="ts">
 import { useTimer } from "@/composables/timer";
+import { computed } from "vue";
 
 const { value, start, stop, reset } = useTimer();
+const formattedValue = computed(() => {
+  const mins = Math.floor(value.value / 60).toString().padStart(2, "0");
+  const secs = (value.value % 60).toString().padStart(2, "0");
+  return `${mins}:${secs}`;
+});
 
 defineExpose({
   start,
@@ -21,7 +27,7 @@ defineExpose({
   position: absolute;
   top: 3rem;
   right: 4rem;
-  font-size: 1.5rem;
+  font-size: 2rem;
   display: flex;
   align-items: center;
   gap: 2px;
@@ -35,7 +41,7 @@ defineExpose({
 }
 
 .mdi {
-  font-size: 24px;
-  padding-top: 3px;
+  font-size: 28px;
+  padding-top: 4px;
 }
 </style>
