@@ -24,9 +24,6 @@ defineExpose({
 
 <style scoped>
 .game-timer {
-  position: absolute;
-  top: 3rem;
-  right: 4rem;
   font-size: 2rem;
   display: flex;
   align-items: center;

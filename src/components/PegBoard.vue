@@ -50,14 +50,14 @@ function selectPeg(index: number) {
   emit("pegSelected");
   const result = PegGame.selectPeg(model.value, index);
   if (result.valid) {
-    model.value = result.newBoard;
+    model.value = [...result.newBoard];
   }
 }
 
 function selectEnd(endIndex: number) {
   const result = PegGame.selectEnd(model.value, endIndex);
   if (result.valid) {
-    model.value = result.newBoard;
+    model.value = [...result.newBoard];
     updateGameState();
   }
 }

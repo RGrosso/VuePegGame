@@ -2,10 +2,12 @@
   <div id="game-stage">
     <GameIntro v-if="showIntro" @startGame="startGame" />
     <template v-else>
-      <GameTimer ref="timerEl" />
-      <button class="restart-game" @click="restartGame">
-        <span class="mdi mdi-refresh" /><div class="sr-only">Restart game</div>
-      </button>
+      <div class="game-actions">
+        <button class="restart-game" @click="restartGame">
+          <span class="mdi mdi-refresh" /><div class="sr-only">Restart game</div>
+        </button>
+        <GameTimer ref="timerEl" />
+      </div>
       <PegBoard
         v-model="gameBoard"
         v-model:status="gameStatus"
@@ -51,7 +53,7 @@ import GameTimer from "./GameTimer.vue";
 import PegBoard from "./PegBoard.vue";
 
 const gameBoard = ref<BoardState>(PegGame.getInitialBoard());
-const gameStatus = shallowRef<GameStatus>(GameStatus.Ongoing);
+const gameStatus = ref<GameStatus>(GameStatus.Ongoing);
 const showIntro = shallowRef(true);
 const gameSecondsDuration = shallowRef<number | null>(null);
 const hasStartedTimer = shallowRef(false);
@@ -128,9 +130,6 @@ watch(gameStatus, () => {
 }
 
 .restart-game {
-  position: absolute;
-  top: 3rem;
-  left: 4rem;
   font-size: 1.5rem;
   background: none;
   border: none;
@@ -139,12 +138,22 @@ watch(gameStatus, () => {
   aspect-ratio: 1;
   height: 2.5rem;
   width: 2.5rem;
-  cursor: pointer;
   transition: background-color 150ms ease-in-out;
   border: solid 2px var(--clr-primary);
 }
 
-.restart-game:hover {
+
+.restart-game[disabled=false]:hover {
+  cursor: pointer;
   background-color: var(--clr-primary);
+}
+
+.game-actions {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+  align-items: center;
+  margin-bottom: 2rem;
 }
 </style>
