@@ -1,21 +1,20 @@
 <template>
   <div class="summary-row">
     <GameSummaryCol header="Pegs remaining">
-      {{ remainingPegs }}
+      {{ gameStore.remainingPegs }}
       <span class="mdi mdi-hexagon primary-color-text" />
     </GameSummaryCol>
     <GameSummaryCol header="Best score">
-      TODO
+      {{ gameStore.bestScore.remainingPegs ? gameStore.bestScore.remainingPegs + ' pegs' : 'N/A' }}
     </GameSummaryCol>
   </div>
 </template>
 
 <script setup lang="ts">
 import GameSummaryCol from "./GameSummaryCol.vue";
+import { useGameStore } from "@/stores/gameStore";
 
-defineProps<{
-  remainingPegs: number,
-}>();
+const gameStore = useGameStore();
 </script>
 
 <style scoped>

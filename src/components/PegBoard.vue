@@ -6,22 +6,25 @@
         :key="`peg-${r}-${c}`"
         :row-index="r"
         :col-index="c"
-        :state="model[gameBoardIndex]!"
+        :state="gameBoard[gameBoardIndex]!"
         @select-peg="selectPeg(gameBoardIndex)"
         @select-end="selectEnd(gameBoardIndex)"
       />
     </div>
   </div>
+  <p v-if="instructions" class="instructions">{{ instructions }}</p>
 </template>
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { GameStatus, ROW_COUNT, type BoardState } from "@/game/constants";
+import { ROW_COUNT, TileState } from "@/game/constants";
 import PegTile from "./PegTile.vue";
 import PegGame from "@/game/PegGame";
+import { useGameStore } from "@/stores/gameStore";
+import { storeToRefs } from "pinia";
 
-const model = defineModel<BoardState>({ required: true });
-const gameStatus = defineModel<GameStatus>("status", { required: true });
+const gameStore = useGameStore();
+const { gameBoard, gameStatus } = storeToRefs(gameStore);
 
 const emit = defineEmits<{
   pegSelected: [],
@@ -44,19 +47,41 @@ const gameBoardTiled = computed(() => {
 
 function selectPeg(index: number) {
   emit("pegSelected");
-  const result = PegGame.selectPeg(model.value, index);
+  const result = PegGame.selectPeg(gameBoard.value, index);
   if (result.valid) {
-    model.value = result.newBoard;
+    gameBoard.value = result.newBoard;
   }
 }
 
 function selectEnd(endIndex: number) {
-  const result = PegGame.selectEnd(model.value, endIndex);
+  const result = PegGame.selectEnd(gameBoard.value, endIndex);
   if (result.valid) {
-    model.value = result.newBoard;
+    gameBoard.value = result.newBoard;
     gameStatus.value = PegGame.getGameState(result.newBoard);
   }
 }
+
+const instructions = computed(() => {
+  if (gameBoard.value.every(t => t !== TileState.SelectedPeg)) {
+    return "Select a peg to jump...";
+  }
+
+  // TODO:
+  // This logic is a bit rough and needs a clean up
+  // We also should show some more useful messages if the user keeps selecting pegs with no possible moves
+  const containsSelectedPeg = gameBoard.value.some(t => t === TileState.SelectedPeg);
+  const hasPossibleEnd = gameBoard.value.some(t => t === TileState.PossibleEnd);
+
+
+  if (containsSelectedPeg) {
+    if (hasPossibleEnd) {
+      return "Select an empty tile to jump to...";
+    }
+    return "No possible moves, select another peg jump.";
+  }
+
+  return null;
+});
 </script>
 
 <style scoped>
@@ -73,5 +98,12 @@ function selectEnd(endIndex: number) {
   display: flex;
   justify-content: center;
   gap: var(--tile-gap);
+}
+
+.instructions {
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 1.25rem;
+  color: var(--off-white);
 }
 </style>

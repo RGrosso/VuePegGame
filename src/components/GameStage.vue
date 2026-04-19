@@ -8,7 +8,7 @@
         </button>
         <GameTimer ref="timerEl" />
       </div>
-      <GameSummaryRow :remaining-pegs="remainingPegs" />
+      <GameSummaryRow />
       <PegBoard
         v-model="gameBoard"
         v-model:status="gameStatus"
@@ -32,7 +32,7 @@
         heading="Game Over"
         :text="[
           'There are no possible moves left to play.',
-          `You had ${remainingPegs} remaining pegs left.`,
+          `You had ${gameStore.remainingPegs} remaining pegs left.`,
           `Your time was ${typeof gameSecondsDuration ==='number'  ? gameSecondsDuration + ' seconds' : 'N/A'}.`,
         ]"
         restartGameText="Retry"
@@ -45,7 +45,7 @@
 
 <script setup lang="ts">
 import PegGame from "@/game/PegGame";
-import { computed, ref, shallowRef, useTemplateRef, watch } from "vue";
+import { shallowRef, useTemplateRef, watch } from "vue";
 import { GameStatus, TileState, type BoardState } from "@/game/constants";
 import OverlayMessage from "./OverlayMessage.vue";
 import ConfettiContainer from "./ConfettiContainer.vue";
@@ -53,14 +53,15 @@ import GameIntro from "./GameIntro.vue";
 import GameTimer from "./GameTimer.vue";
 import PegBoard from "./PegBoard.vue";
 import GameSummaryRow from "./GameSummaryRow.vue";
+import { storeToRefs } from "pinia";
+import { useGameStore } from "@/stores/gameStore";
 
-const gameBoard = ref<BoardState>(PegGame.getInitialBoard());
-const gameStatus = ref<GameStatus>(GameStatus.Ongoing);
+const gameStore = useGameStore();
+const { gameBoard, gameStatus, gameSecondsDuration } = storeToRefs(gameStore);
+
 const showIntro = shallowRef(true);
-const gameSecondsDuration = shallowRef<number | null>(null);
 const hasStartedTimer = shallowRef(false);
 
-const remainingPegs = computed<number>(() => gameBoard.value.filter(peg => [TileState.Peg, TileState.SelectedPeg].includes(peg)).length);
 const timerRef = useTemplateRef("timerEl");
 
 function tryStartTimer() {
