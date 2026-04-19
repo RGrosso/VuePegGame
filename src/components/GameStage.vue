@@ -6,19 +6,11 @@
       <button class="restart-game" @click="restartGame">
         <span class="mdi mdi-refresh" /><div class="sr-only">Restart game</div>
       </button>
-      <div class="peg-container">
-        <div v-for="(row, r) in gameBoardTiled" :key="`row-${r}`" class="row">
-          <PegTile
-            v-for="(gameBoardIndex, c) in row"
-            :key="`peg-${r}-${c}`"
-            :row-index="r"
-            :col-index="c"
-            :state="gameBoard[gameBoardIndex]!"
-            @select-peg="selectPeg(gameBoardIndex)"
-            @select-end="selectEnd(gameBoardIndex)"
-          />
-        </div>
-      </div>
+      <PegBoard
+        v-model="gameBoard"
+        v-model:status="gameStatus"
+        @pegSelected="tryStartTimer"
+      />
       <OverlayMessage
         v-if="gameStatus === GameStatus.Won"
         variant="success"
@@ -50,61 +42,27 @@
 
 <script setup lang="ts">
 import PegGame from "@/game/PegGame";
-import PegTile from "./PegTile.vue";
-import { computed, ref, shallowRef, useTemplateRef } from "vue";
-import { GameStatus, ROW_COUNT, TileState, type BoardState } from "@/game/constants";
+import { computed, ref, shallowRef, useTemplateRef, watch } from "vue";
+import { GameStatus, TileState, type BoardState } from "@/game/constants";
 import OverlayMessage from "./OverlayMessage.vue";
 import ConfettiContainer from "./ConfettiContainer.vue";
 import GameIntro from "./GameIntro.vue";
 import GameTimer from "./GameTimer.vue";
+import PegBoard from "./PegBoard.vue";
 
 const gameBoard = ref<BoardState>(PegGame.getInitialBoard());
-const gameStatus = ref<GameStatus>(GameStatus.Ongoing);
-const remainingPegs = computed<number>(() => gameBoard.value.filter(peg => [TileState.Peg, TileState.SelectedPeg].includes(peg)).length);
-const showIntro = ref(true);
-const timerRef = useTemplateRef("timerEl");
+const gameStatus = shallowRef<GameStatus>(GameStatus.Ongoing);
+const showIntro = shallowRef(true);
 const gameSecondsDuration = shallowRef<number | null>(null);
 const hasStartedTimer = shallowRef(false);
 
-const gameBoardTiled = computed(() => {
-  // Map the 1D game board to a 2D index array for easier rendering
-  const tiledBoard: number[][] = [];
-  let index = 0;
-  for (let row = 0; row < ROW_COUNT; row++) {
-    const rowTiles: number[] = [];
-    for (let col = 0; col <= row; col++) {
-      rowTiles.push(index);
-      index++;
-    }
-    tiledBoard.push(rowTiles);
-  }
-  return tiledBoard;
-});
+const remainingPegs = computed<number>(() => gameBoard.value.filter(peg => [TileState.Peg, TileState.SelectedPeg].includes(peg)).length);
+const timerRef = useTemplateRef("timerEl");
 
-function updateGameState() {
-  gameStatus.value = PegGame.getGameState(gameBoard.value);
-  if (gameStatus.value !== GameStatus.Ongoing) {
-    gameSecondsDuration.value = timerRef.value?.stop() ?? null;
-  }
-}
-
-function selectPeg(index: number) {
-  // Start the timer on the first peg selection
-  if (!hasStartedTimer.value) {
-    timerRef.value?.start();
+function tryStartTimer() {
+  if (timerRef.value && !hasStartedTimer.value) {
+    timerRef.value.start();
     hasStartedTimer.value = true;
-  }
-  const result = PegGame.selectPeg(gameBoard.value, index);
-  if (result.valid) {
-    gameBoard.value = result.newBoard;
-  }
-}
-
-function selectEnd(endIndex: number) {
-  const result = PegGame.selectEnd(gameBoard.value, endIndex);
-  if (result.valid) {
-    gameBoard.value = result.newBoard;
-    updateGameState();
   }
 }
 
@@ -132,17 +90,22 @@ window.addEventListener("keydown", (e) => {
       // fill the game board with empty tiles except for the first tile which should be a peg
       gameBoard.value = [TileState.Peg, TileState.Peg, ...Array(gameBoard.value.length - 2).fill(TileState.Empty)] as BoardState;
       cheatCodeIndex = 0;
-
     }
-  } else {
-    cheatCodeIndex = 0;
+    return;
+  }
+
+  cheatCodeIndex = 0;
+});
+
+watch(gameStatus, () => {
+  if (gameStatus.value !== GameStatus.Ongoing) {
+    gameSecondsDuration.value = timerRef.value?.stop() ?? null;
   }
 });
 </script>
 
 <style scoped>
 #game-stage {
-  --tile-gap: 6px;
   background-color: var(--game-bg);
   border-radius: var(--game-stage-border-radius);
   border: 2px solid rgba(255, 255, 255, 0.8);
@@ -162,19 +125,6 @@ window.addEventListener("keydown", (e) => {
   z-index: 1;
   width: 640px;
   height: 640px;
-}
-
-.peg-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--tile-gap);
-}
-
-.row {
-  display: flex;
-  justify-content: center;
-  gap: var(--tile-gap);
 }
 
 .restart-game {
