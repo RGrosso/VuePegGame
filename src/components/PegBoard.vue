@@ -42,23 +42,19 @@ const gameBoardTiled = computed(() => {
   return tiledBoard;
 });
 
-function updateGameState() {
-  gameStatus.value = PegGame.getGameState(model.value);
-}
-
 function selectPeg(index: number) {
   emit("pegSelected");
   const result = PegGame.selectPeg(model.value, index);
   if (result.valid) {
-    model.value = [...result.newBoard];
+    model.value = result.newBoard;
   }
 }
 
 function selectEnd(endIndex: number) {
   const result = PegGame.selectEnd(model.value, endIndex);
   if (result.valid) {
-    model.value = [...result.newBoard];
-    updateGameState();
+    model.value = result.newBoard;
+    gameStatus.value = PegGame.getGameState(result.newBoard);
   }
 }
 </script>
