@@ -96,3 +96,7 @@ p {
   top: auto;
   overflow: hidden;
 }
+
+.primary-color-text {
+  color: var(--clr-primary);
+}

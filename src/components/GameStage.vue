@@ -8,6 +8,7 @@
         </button>
         <GameTimer ref="timerEl" />
       </div>
+      <GameSummaryRow :remaining-pegs="remainingPegs" />
       <PegBoard
         v-model="gameBoard"
         v-model:status="gameStatus"
@@ -51,6 +52,7 @@ import ConfettiContainer from "./ConfettiContainer.vue";
 import GameIntro from "./GameIntro.vue";
 import GameTimer from "./GameTimer.vue";
 import PegBoard from "./PegBoard.vue";
+import GameSummaryRow from "./GameSummaryRow.vue";
 
 const gameBoard = ref<BoardState>(PegGame.getInitialBoard());
 const gameStatus = ref<GameStatus>(GameStatus.Ongoing);
@@ -118,7 +120,7 @@ watch(gameStatus, () => {
     0 0 15px rgba(255, 255, 255, 0.1);
   background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(3px);
-  padding: 4rem;
+  padding: 2rem 4rem 3rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -126,13 +128,12 @@ watch(gameStatus, () => {
   position: relative;
   z-index: 1;
   width: 640px;
-  height: 640px;
+  height: 720px;
 }
 
 .restart-game {
   font-size: 1.5rem;
   background: none;
-  border: none;
   color: var(--white);
   border-radius: 64px;
   aspect-ratio: 1;
@@ -142,8 +143,7 @@ watch(gameStatus, () => {
   border: solid 2px var(--clr-primary);
 }
 
-
-.restart-game[disabled=false]:hover {
+.restart-game:hover {
   cursor: pointer;
   background-color: var(--clr-primary);
 }
